@@ -264,10 +264,11 @@ USB 3.0 at 5 Gbps), accessed without root via minipro's udev rules:
   "Firmware is newer than expected" one folded into a single readable line
 - The exact matching software bundle for firmware `0x112` correctly identified
   as `xgpro_T76_V1321.rar`
+- **Writing to a physical EPROM works** — confirmed on the T76, algorithm
+  bundle installed
 
-Read and write against a physical chip were not exercised — no EEPROM was in
-the socket. The read path was verified end to end against the fake programmer
-(32 KiB transferred into the hex viewer).
+The read path has been exercised end to end against the simulated programmer in
+`tests/` (32 KiB transferred into the hex viewer) rather than against silicon.
 
 ## Known limitations
 
