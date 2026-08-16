@@ -2,7 +2,7 @@
 
 Linux-only addition, not present in the macOS original. Shows which arcade
 machines use a ROM matching the current buffer's SHA1, using the database from
-the minipro+ project (the same lookup its `-M` option performs).
+MAME-Embedded-Database (https://github.com/Guimli/MAME-Embedded-Database).
 """
 
 from __future__ import annotations

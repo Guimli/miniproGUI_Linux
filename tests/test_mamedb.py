@@ -1,8 +1,8 @@
 """MAME database lookup tests.
 
-The lookup mirrors mamedb.c from the minipro+ fork. Tests that need a database
-build a small one in-memory with the same schema, so they run without the real
-55 MB file; the ones that need the real database skip when it is absent.
+Tests that need a database build a small one with MAME-Embedded-Database's
+schema, so they run without the real file; the ones that need the real database
+skip when it is absent.
 """
 
 from __future__ import annotations
@@ -25,8 +25,8 @@ from visualminipro.utils.mamedb import (  # noqa: E402
     find_database,
 )
 
-# The SHA1 from minipro+'s own worked example ("sha1 a verifier.txt"):
-# a 8 KiB Pole Position ROM shared by several machines.
+# A known 8 KiB Pole Position ROM, shared by several machines - a good probe
+# because one hash legitimately resolves to many matches.
 POLE_POSITION_SHA1 = "52342572940489175607BBF5B6CFD05EE9B0F004"
 
 BUNDLED_DATABASE = Path(__file__).resolve().parent.parent / "data" / "mame_roms.db"

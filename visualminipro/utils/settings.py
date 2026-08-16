@@ -18,8 +18,8 @@ logger = logging.getLogger("visualminipro.settings")
 _FAVORITE_CHIPS_KEY = "favoriteChips"
 _LIBUSB_DEBUG_LOGGING_KEY = "libusbDebugLogging"
 _USE_LEGACY_INFOIC_KEY = "useLegacyInfoIC"
-# Linux addition: path to the minipro+ MAME ROM database. Empty means
-# "auto-detect from the usual locations".
+# Linux addition: path to the MAME ROM database. Empty means "auto-detect from
+# the usual locations".
 _MAME_DATABASE_PATH_KEY = "mameDatabasePath"
 
 _DEFAULTS: dict[str, Any] = {

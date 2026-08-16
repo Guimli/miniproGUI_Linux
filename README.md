@@ -106,11 +106,11 @@ Run it with `visual-minipro`, or `python3 -m visualminipro` from here.
 
 ## SHA1 and MAME ROM identification
 
-Not part of the macOS original. The lookup is borrowed from the
-[minipro+](https://gitlab.com/DavidGriffith/minipro) fork, which adds a
-`-M <database>` option doing the same thing from the CLI; the database itself
-comes from
-[MAME-Embedded-Database](https://github.com/Guimli/MAME-Embedded-Database).
+Not part of the macOS original. Both the database and the identification
+approach come from
+[MAME-Embedded-Database](https://github.com/Guimli/MAME-Embedded-Database),
+which converts the official MAME DAT files into a compact database and looks
+ROMs up by SHA1.
 
 After **every chip read and every file open**, the buffer is hashed with SHA1
 and the hash is looked up in that database. The Chip Programming page shows:
@@ -118,8 +118,8 @@ and the hash is looked up in that database. The Chip Programming page shows:
 - the **SHA1 next to the buffer size**, in full and selectable
 - two tabs over the buffer: **Hex View** and **MAME Database**
 
-The MAME tab lists every arcade machine using a ROM with that hash, in the same
-order `minipro -M` prints them. Each match shows its description and year in the
+The MAME tab lists every arcade machine using a ROM with that hash, ordered by
+machine then ROM name. Each match shows its description and year in the
 heading, then ROM filename, machine short name and manufacturer.
 
 The ROM size is deliberately not repeated per match: `sha1` is effectively
@@ -127,8 +127,10 @@ unique in the `roms` table (164 834 ROMs, 164 834 distinct SHA1s, none carrying
 two different sizes), so a lookup resolves to exactly one size — always the one
 already shown above the tabs.
 
-The lookup is a reimplementation of minipro+'s `src/mamedb.c` in Python
-(`visualminipro/utils/mamedb.py`), against the same `mame_roms.db`:
+The lookup is implemented in Python (`visualminipro/utils/mamedb.py`) directly
+against
+[MAME-Embedded-Database](https://github.com/Guimli/MAME-Embedded-Database)'s
+schema:
 
 - `roms.sha1` is a 20-byte BLOB and is indexed, so lookups take ~7 ms even
   across 164 834 ROMs and 50 283 machines
@@ -157,7 +159,7 @@ Resolution order:
 1. the path set in **Settings → MAME ROM Database**, if any — an explicit
    setting always wins
 2. `data/mame_roms.db` bundled here
-3. `~/minipro+/mame_roms.db`, `~/minipro-plus/`, then minipro's share directory
+3. `~/MAME-Embedded-Database/mame_roms.db`, then minipro's share directory
 
 The application runs fine without any database — only the MAME tab is affected,
 and it says what is missing.
@@ -303,7 +305,5 @@ one, so its more permissive GPL-3+ terms do not widen what applies here.
   the macOS original this port follows
 - [minipro](https://gitlab.com/DavidGriffith/minipro) by David Griffith — the
   tool doing all the real work with the hardware
-- [minipro+](https://gitlab.com/DavidGriffith/minipro) — the `-M` SHA1 lookup
-  reimplemented here
 - [MAME-Embedded-Database](https://github.com/Guimli/MAME-Embedded-Database) —
-  the MAME ROM database used for identification
+  the MAME ROM database and the SHA1 identification approach

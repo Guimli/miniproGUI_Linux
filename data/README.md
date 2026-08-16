@@ -37,4 +37,5 @@ A SQLite database with MAME-Embedded-Database's schema — `roms`, `machines`,
 its `build_mame_database.py` qualifies.
 
 Once present here, it is picked up automatically: the bundled copy is the first
-candidate in the lookup order, ahead of `~/minipro+/mame_roms.db`.
+candidate in the lookup order, ahead of `~/MAME-Embedded-Database/mame_roms.db`
+and minipro's share directory.

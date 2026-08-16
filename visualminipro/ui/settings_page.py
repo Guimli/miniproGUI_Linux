@@ -52,8 +52,8 @@ class SettingsPage(Gtk.Box):
             title="MAME ROM Database",
             description=(
                 "After every chip read or file open, the buffer's SHA1 is looked up in "
-                "this database to identify known arcade ROMs. Build it with the minipro+ "
-                "project's build_mame_database.py."
+                "this database to identify known arcade ROMs. It comes from the "
+                "MAME-Embedded-Database project."
             ),
         )
 
@@ -80,7 +80,8 @@ class SettingsPage(Gtk.Box):
             configured = settings.mame_database_path
             self._mame_row.set_subtitle(
                 f"Not found at {configured}" if configured
-                else "Not found — searched ~/minipro+/mame_roms.db and minipro's share directory"
+                else "Not found — searched data/, ~/MAME-Embedded-Database/ and "
+                     "minipro's share directory"
             )
             return
         try:

@@ -1,11 +1,12 @@
 """MAME ROM database lookup.
 
-Reimplements the lookup from the minipro+ fork (`src/mamedb.c`, the `-M`
-option) in Python: hash the buffer with SHA1, then find every MAME machine
-that uses a ROM with that hash.
+Hash the buffer with SHA1, then find every MAME machine that uses a ROM with
+that hash.
 
-The database is the `mame_roms.db` built by minipro+'s `build_mame_database.py`
-(~165 000 ROMs across ~50 000 machines). Schema notes that matter here:
+The database is the `mame_roms.db` from MAME-Embedded-Database
+(https://github.com/Guimli/MAME-Embedded-Database), built by its
+`build_mame_database.py` (~165 000 ROMs across ~50 000 machines). Schema notes
+that matter here:
 
   * `roms.sha1` is a 20-byte BLOB, not hex text — and it is indexed, so
     lookups are single-digit milliseconds.
@@ -26,8 +27,8 @@ from typing import Optional
 
 logger = logging.getLogger("visualminipro.mamedb")
 
-# Same query as mamedb_find_by_sha1() in minipro+, including the ordering, so
-# results line up with what `minipro -M` prints.
+# Ordered by machine then ROM name so repeated lookups of the same hash always
+# present matches in the same order.
 _LOOKUP_SQL = """
 SELECT
   rn.name  AS rom_name,
@@ -56,11 +57,10 @@ def _bundled_database() -> Path:
 
 
 def _database_candidates() -> tuple[Path, ...]:
-    """Auto-detection order: the bundled database first, then minipro+'s own."""
+    """Auto-detection order: the bundled database first, then a checkout."""
     return (
         _bundled_database(),
-        Path.home() / "minipro+" / "mame_roms.db",
-        Path.home() / "minipro-plus" / "mame_roms.db",
+        Path.home() / "MAME-Embedded-Database" / "mame_roms.db",
         Path("/usr/local/share/minipro/mame_roms.db"),
         Path("/usr/share/minipro/mame_roms.db"),
     )
@@ -86,7 +86,7 @@ class MameDatabaseError(Exception):
 
 
 def compute_sha1(data: bytes) -> str:
-    """Uppercase hex SHA1, matching minipro+'s mamedb_sha1_to_hex()."""
+    """Uppercase hex SHA1, the form MAME ROM databases quote hashes in."""
     return hashlib.sha1(data).hexdigest().upper()
 
 
@@ -94,7 +94,7 @@ def find_database(configured: Optional[str] = None) -> Optional[Path]:
     """Resolve the mame_roms.db path.
 
     An explicit setting always wins; otherwise the bundled database is used,
-    falling back to a minipro+ checkout if this copy is missing.
+    falling back to a MAME-Embedded-Database checkout if this copy is missing.
     """
     if configured:
         candidate = Path(os.path.expanduser(configured))

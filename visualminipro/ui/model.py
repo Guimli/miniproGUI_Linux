@@ -101,7 +101,7 @@ class MiniproModel(GObject.Object):
                 f"The MAME database was not found at {configured}."
                 if configured
                 else "No MAME ROM database found. Set its location in Settings "
-                     "(the minipro+ project builds it as mame_roms.db)."
+                     "(MAME-Embedded-Database builds it as mame_roms.db)."
             )
             return sha1, None, MameDatabaseError(message)
 
