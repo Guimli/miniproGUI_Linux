@@ -1,0 +1,2 @@
+#!/bin/sh
+exec python3 "/home/flore/miniproUI/visual-minipro-linux/tests/fake_minipro.py" "$@"

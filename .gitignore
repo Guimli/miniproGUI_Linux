@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# Packaging output
+build/
+dist/
+
+# The MAME ROM database is 54 MB - too big to belong in Git history.
+# It ships inside the .deb published on the Releases page instead.
+# See data/README.md for how to obtain or rebuild it.
+data/*.db

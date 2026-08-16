@@ -1,0 +1,17 @@
+#!/bin/sh
+# Launcher for Visual Minipro (Linux port).
+# Resolves the application directory even when invoked through a symlink.
+set -e
+
+SELF="$0"
+while [ -L "$SELF" ]; do
+    TARGET="$(readlink "$SELF")"
+    case "$TARGET" in
+        /*) SELF="$TARGET" ;;
+        *)  SELF="$(dirname "$SELF")/$TARGET" ;;
+    esac
+done
+
+APP_DIR="$(cd "$(dirname "$SELF")/.." && pwd)"
+
+exec python3 -c "import sys; sys.path.insert(0, '$APP_DIR'); from visualminipro.ui.app import main; sys.exit(main(sys.argv))" "$@"

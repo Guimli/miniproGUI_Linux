@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Visual Minipro
+GenericName=EEPROM Programmer
+Comment=Read and write EEPROMs and test logic ICs with XGecu programmers
+Exec=visual-minipro
+Icon=application-x-firmware
+Terminal=false
+Categories=Development;Electronics;Utility;
+Keywords=eeprom;flash;programmer;xgecu;minipro;tl866;t48;t56;t76;
+StartupNotify=true
