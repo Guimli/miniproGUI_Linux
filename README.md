@@ -73,10 +73,9 @@ The package installs to `/usr/share/visual-minipro`, with a launcher in
 `/usr/bin`, a desktop entry, an icon and a man page. Remove it with
 `sudo apt remove visual-minipro`.
 
-It also ships `data/mame_roms.db`, which takes the `.deb` from 44 KB to about
-14 MB (the database compresses from 54 MB to ~14 MB). Delete `data/` before
-building if you would rather ship without it — the build warns and carries on,
-and the app falls back to a minipro+ checkout.
+It also ships `data/mame_roms.db` when that file is present, which is what
+makes the packaged app identify ROMs out of the box. Leave `data/` empty before
+building to ship without it — the build warns and carries on.
 
 `minipro` cannot be expressed as a dependency because Debian does not package
 it, so the package installs without it and `postinst` prints build instructions
@@ -107,13 +106,14 @@ Run it with `visual-minipro`, or `python3 -m visualminipro` from here.
 
 ## SHA1 and MAME ROM identification
 
-Not part of the macOS original. Borrowed from the
-[minipro+](https://gitlab.com/DavidGriffith/minipro) fork in `~/minipro+`,
-which adds a `-M <database>` option doing the same lookup from the CLI.
+Not part of the macOS original. The lookup is borrowed from the
+[minipro+](https://gitlab.com/DavidGriffith/minipro) fork, which adds a
+`-M <database>` option doing the same thing from the CLI; the database itself
+comes from
+[MAME-Embedded-Database](https://github.com/Guimli/MAME-Embedded-Database).
 
 After **every chip read and every file open**, the buffer is hashed with SHA1
-and the hash is looked up in minipro+'s MAME ROM database. The Chip Programming
-page shows:
+and the hash is looked up in that database. The Chip Programming page shows:
 
 - the **SHA1 next to the buffer size**, in full and selectable
 - two tabs over the buffer: **Hex View** and **MAME Database**
@@ -144,11 +144,13 @@ configure. It sits beside the Python package, so the same relative lookup
 resolves in the source tree and at `/usr/share/visual-minipro/data/` once
 packaged.
 
-At 54 MB it is **not tracked in Git**. The `.deb` on the
-[Releases page](https://github.com/Guimli/miniproGUI_Linux/releases) contains
-it, so installing the package gets you the database too. Cloning the source
-does not — see [`data/README.md`](data/README.md) for how to build or supply
-it. The application runs fine without one; only the MAME tab is affected.
+It comes from
+[MAME-Embedded-Database](https://github.com/Guimli/MAME-Embedded-Database),
+which turns the official MAME DAT files into a compact SQLite database for ROM
+identification. Get `mame_roms.db` from there and drop it into `data/`, or
+install the `.deb` from the
+[Releases page](https://github.com/Guimli/miniproGUI_Linux/releases), which
+already contains it. See [`data/README.md`](data/README.md) for details.
 
 Resolution order:
 
@@ -157,10 +159,8 @@ Resolution order:
 2. `data/mame_roms.db` bundled here
 3. `~/minipro+/mame_roms.db`, `~/minipro-plus/`, then minipro's share directory
 
-To use a newer database, rebuild it with minipro+'s `build_mame_database.py`
-and either replace `data/mame_roms.db` or point at it in Settings. If no
-database is present at all, everything else keeps working and the tab explains
-what is missing.
+The application runs fine without any database — only the MAME tab is affected,
+and it says what is missing.
 
 Hashing and the query both run on a worker thread, so a large NAND dump does
 not freeze the window.
@@ -233,12 +233,13 @@ captures — including the T76 quirk where an `FPGA Reset  OK` line follows
 verification, and the negative lookahead that keeps
 `Logic test failed: N errors encountered` from being treated as a fatal error.
 
-The other 17 cover the MAME lookup, using a fixture database with the real
-schema. Three of them run against the actual `~/minipro+/mame_roms.db` when it
-is present (and skip when it is not), checking that minipro+'s own worked
-example — the 8 KiB Pole Position ROM
-`52342572940489175607BBF5B6CFD05EE9B0F004` — still resolves to `polepos` and
-friends.
+The other 21 cover the MAME lookup, using a fixture database built with the
+real schema. Six of them run against `data/mame_roms.db` when it is present
+(and skip when it is not): that auto-detection really resolves to it, that an
+explicit setting still overrides it, and that the 8 KiB Pole Position ROM
+`52342572940489175607BBF5B6CFD05EE9B0F004` still resolves to `polepos` and
+friends. One asserts that no SHA1 in the database carries two different sizes —
+the property that lets the MAME tab omit a per-match ROM size.
 
 There is also a fake programmer for exercising the UI without hardware:
 
@@ -295,3 +296,14 @@ the more restrictive of the two licences.
 
 `minipro` is a separate program invoked as a subprocess, not linked into this
 one, so its more permissive GPL-3+ terms do not widen what applies here.
+
+## Credits
+
+- [Visual Minipro](https://github.com/moozzyk/MiniproUI) by Pawel Kadluczka —
+  the macOS original this port follows
+- [minipro](https://gitlab.com/DavidGriffith/minipro) by David Griffith — the
+  tool doing all the real work with the hardware
+- [minipro+](https://gitlab.com/DavidGriffith/minipro) — the `-M` SHA1 lookup
+  reimplemented here
+- [MAME-Embedded-Database](https://github.com/Guimli/MAME-Embedded-Database) —
+  the MAME ROM database used for identification
